@@ -62,8 +62,8 @@ agents:
       6. **On-Chain Composite Directional Signal** — Explicitly give a "{timeframe} bullish / bearish / neutral" on-chain signal with confidence level
     tools: [bash, read_file, write_file, load_skill]
     skills: [onchain-analysis, okx-market, stablecoin-flow]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: defi_analyst
@@ -113,8 +113,8 @@ agents:
       6. **DeFi-Layer Directional Signal** — From a DeFi ecosystem perspective, give a {timeframe} directional assessment for {target} with core rationale
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [crypto-derivatives, defi-yield, token-unlock-treasury, web-reader]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: crypto_sentiment_analyst
@@ -174,8 +174,8 @@ agents:
       6. **Sentiment Directional Signal** — Provide {timeframe} timing guidance from a sentiment perspective; explicitly state whether the view is "momentum-following" or "contrarian"
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [sentiment-analysis, okx-market, perp-funding-basis, liquidation-heatmap]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: alpha_synthesizer
@@ -224,8 +224,8 @@ agents:
       6. **Risk Scenarios and Contingency Plans** — The 2 most probable downside risk scenarios and response strategies (position reduction triggers and target levels)
     tools: [bash, read_file, write_file, load_skill]
     skills: [asset-allocation, risk-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

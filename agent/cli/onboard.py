@@ -449,6 +449,23 @@ def run_onboarding(*, console: Console | None = None) -> Path | None:
             if str(token).strip():
                 values["TUSHARE_TOKEN"] = str(token).strip()
                 _save_partial(values)
+            url_choices = [
+                ("__skip__", "No, use default (api.waditu.com)"),
+                ("__paste__", "Yes — paste a custom Tushare API URL"),
+            ]
+            url_decision = _select_with_back(
+                "Use a custom Tushare API endpoint? (optional, for mirrors/proxies)",
+                url_choices, default_index=0, console=cons,
+            )
+            if url_decision is BACK or url_decision is CANCEL:
+                return url_decision
+            if url_decision == "__paste__":
+                url = _prompt_secret("Tushare API URL", console=cons)
+                if url is BACK or url is CANCEL:
+                    return url
+                if str(url).strip():
+                    values["TUSHARE_URL"] = str(url).strip()
+                    _save_partial(values)
         return "ok"
 
     steps: list[Callable[[], object]] = [

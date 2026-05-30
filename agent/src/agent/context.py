@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -76,7 +77,7 @@ Decide which workflow to use based on the request:
 - Respond in the same language the user used.
 - You have persistent cross-session memory (`remember` tool). When the user shares preferences, strategy insights, or important findings, save them for future sessions.
 - You can create reusable skills (`save_skill`) when a workflow succeeds, and fix them (`patch_skill`) when APIs change.
-{memory_section}
+{disabled_sources_section}{memory_section}
 ## Current Date & Time
 
 Today is {current_datetime}.
@@ -136,6 +137,23 @@ class ContextBuilder:
                 snapshot=self._persistent_memory.snapshot,
             )
 
+        # Build disabled-sources section from ENABLED_DATA_SOURCES env var
+        _all_sources = ["tushare", "akshare", "yfinance", "okx", "ccxt"]
+        _raw = os.environ.get("ENABLED_DATA_SOURCES", "").strip()
+        if _raw:
+            _enabled = [s for s in _raw.split(",") if s.strip() in _all_sources]
+        else:
+            _enabled = list(_all_sources)
+        _disabled = [s for s in _all_sources if s not in _enabled]
+        if _disabled:
+            disabled_sources_section = (
+                "\n## Data Source Restrictions\n\n"
+                f"The following data sources are **disabled** by user settings and MUST NOT be used: {', '.join(_disabled)}\n"
+                f"Only use these sources: {', '.join(_enabled) if _enabled else 'none'}\n\n"
+            )
+        else:
+            disabled_sources_section = ""
+
         return _SYSTEM_PROMPT.format(
             tool_count=len(self.registry._tools),
             skill_count=len(self.skills_loader.skills),
@@ -143,6 +161,7 @@ class ContextBuilder:
             skill_descriptions=self.skills_loader.get_descriptions(),
             memory_summary=self.memory.to_summary(),
             memory_section=memory_section,
+            disabled_sources_section=disabled_sources_section,
             current_datetime=now.strftime("%A, %B %d, %Y %H:%M (local)"),
         )
 

@@ -186,15 +186,20 @@ class UpdateLLMSettingsRequest(BaseModel):
     reasoning_effort: Optional[str] = None
 
 
+ALL_DATA_SOURCES: List[str] = ["tushare", "akshare", "yfinance", "okx", "ccxt"]
+
+
 class DataSourceSettingsResponse(BaseModel):
     """Current data source credential settings."""
 
     tushare_token_configured: bool
     tushare_token_hint: Optional[str] = None
+    tushare_url: Optional[str] = None
     baostock_supported: bool
     baostock_installed: bool
     baostock_message: str
     env_path: str
+    enabled_sources: List[str] = Field(default_factory=lambda: list(ALL_DATA_SOURCES))
 
 
 class UpdateDataSourceSettingsRequest(BaseModel):
@@ -202,6 +207,9 @@ class UpdateDataSourceSettingsRequest(BaseModel):
 
     tushare_token: Optional[str] = None
     clear_tushare_token: bool = False
+    tushare_url: Optional[str] = None
+    clear_tushare_url: bool = False
+    enabled_sources: Optional[List[str]] = None
 
 
 # ---- V4 Session Models ----
@@ -733,6 +741,7 @@ def _build_data_source_settings_response(values: Optional[Dict[str, str]] = None
     env_values = values if values is not None else _read_settings_env_values()
     token = env_values.get("TUSHARE_TOKEN", "")
     token_configured = _is_configured_secret(token, TUSHARE_TOKEN_PLACEHOLDERS)
+    tushare_url = env_values.get("TUSHARE_URL", "").strip() or None
     supported = _baostock_supported()
     installed = _baostock_installed()
     if supported:
@@ -741,13 +750,24 @@ def _build_data_source_settings_response(values: Optional[Dict[str, str]] = None
         baostock_message = "BaoStock package is installed, but this project has no BaoStock loader."
     else:
         baostock_message = "No BaoStock loader is registered in this project."
+
+    raw_enabled = env_values.get("ENABLED_DATA_SOURCES", "").strip()
+    if raw_enabled:
+        enabled_sources = [s.strip() for s in raw_enabled.split(",") if s.strip() in ALL_DATA_SOURCES]
+        if not enabled_sources:
+            enabled_sources = list(ALL_DATA_SOURCES)
+    else:
+        enabled_sources = list(ALL_DATA_SOURCES)
+
     return DataSourceSettingsResponse(
         tushare_token_configured=token_configured,
         tushare_token_hint=None,
+        tushare_url=tushare_url,
         baostock_supported=supported,
         baostock_installed=installed,
         baostock_message=baostock_message,
         env_path=_project_relative_path(ENV_PATH),
+        enabled_sources=enabled_sources,
     )
 
 
@@ -1217,6 +1237,19 @@ async def update_data_source_settings(payload: UpdateDataSourceSettingsRequest):
     elif "TUSHARE_TOKEN" in current_values:
         updates["TUSHARE_TOKEN"] = current_values["TUSHARE_TOKEN"]
 
+    if payload.clear_tushare_url:
+        updates["TUSHARE_URL"] = ""
+    elif payload.tushare_url is not None and payload.tushare_url.strip():
+        updates["TUSHARE_URL"] = payload.tushare_url.strip()
+    elif "TUSHARE_URL" in current_values:
+        updates["TUSHARE_URL"] = current_values["TUSHARE_URL"]
+
+    if payload.enabled_sources is not None:
+        valid = [s for s in payload.enabled_sources if s in ALL_DATA_SOURCES]
+        updates["ENABLED_DATA_SOURCES"] = ",".join(valid) if valid else ",".join(ALL_DATA_SOURCES)
+    elif "ENABLED_DATA_SOURCES" in current_values:
+        updates["ENABLED_DATA_SOURCES"] = current_values["ENABLED_DATA_SOURCES"]
+
     if updates:
         _write_env_values(ENV_PATH, updates)
         token = updates.get("TUSHARE_TOKEN", "").strip()
@@ -1224,6 +1257,16 @@ async def update_data_source_settings(payload: UpdateDataSourceSettingsRequest):
             os.environ["TUSHARE_TOKEN"] = token
         else:
             os.environ.pop("TUSHARE_TOKEN", None)
+        url = updates.get("TUSHARE_URL", "").strip()
+        if url:
+            os.environ["TUSHARE_URL"] = url
+        else:
+            os.environ.pop("TUSHARE_URL", None)
+        enabled_str = updates.get("ENABLED_DATA_SOURCES", "")
+        if enabled_str:
+            os.environ["ENABLED_DATA_SOURCES"] = enabled_str
+        else:
+            os.environ.pop("ENABLED_DATA_SOURCES", None)
 
     return _build_data_source_settings_response(_read_env_values(ENV_PATH))
 

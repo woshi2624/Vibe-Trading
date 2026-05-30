@@ -34,8 +34,8 @@ agents:
       Use factor_analysis for IC (information coefficient) analysis on candidates.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [ml-strategy, factor-research, multi-factor]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: data_scientist
@@ -68,8 +68,8 @@ agents:
       Use load_skill("ml-strategy") for financial ML design standards, load_skill("quant-statistics") for tests and significance.
     tools: [bash, read_file, write_file, edit_file, load_skill]
     skills: [ml-strategy, quant-statistics]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: backtest_engineer
@@ -105,8 +105,8 @@ agents:
       Use **backtest** for execution; strictly separate OOS data.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [strategy-generate, backtest-diagnose, quant-statistics]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

@@ -54,8 +54,8 @@ agents:
       6. **Volatility Strategy Direction Recommendation** — Based on the above, explicitly recommend "long volatility / short volatility / directional bias / calendar spread"; include confidence level
     tools: [bash, read_file, write_file, load_skill, options_pricing]
     skills: [volatility, options-advanced]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: strategy_designer
@@ -119,8 +119,8 @@ agents:
       6. **Strategy Applicability and Failure Scenarios** — Under what conditions the strategy is effective; under what conditions it fails (requiring prompt adjustment)
     tools: [bash, read_file, write_file, load_skill, options_pricing]
     skills: [options-strategy, options-advanced, hedging-strategy, options-payoff]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: greeks_manager
@@ -180,8 +180,8 @@ agents:
       6. **Dynamic Adjustment Recommendations** — At what price / time / IV level should the strategy be adjusted (Delta rebalancing trigger, roll timing, stop-loss exit conditions)
     tools: [bash, read_file, write_file, load_skill, options_pricing]
     skills: [options-advanced, risk-analysis, volatility, options-payoff]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

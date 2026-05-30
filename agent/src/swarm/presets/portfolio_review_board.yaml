@@ -36,8 +36,8 @@ agents:
       Use load_skill("performance-attribution") for methodology, load_skill("multi-factor") for factor exposure; factor_analysis for quant factor attribution.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [performance-attribution, multi-factor]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: risk_inspector
@@ -80,8 +80,8 @@ agents:
       Use load_skill("risk-analysis") for methodology, load_skill("volatility") for vol and VaR.
     tools: [bash, read_file, write_file, load_skill]
     skills: [risk-analysis, volatility]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: execution_analyst
@@ -123,8 +123,8 @@ agents:
       Use load_skill("execution-model") for execution analytics, load_skill("market-microstructure") for microstructure-driven costs.
     tools: [bash, read_file, write_file, load_skill]
     skills: [execution-model, market-microstructure]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: chief_investment_officer
@@ -161,8 +161,8 @@ agents:
       Use load_skill("asset-allocation") for allocation decisions, load_skill("risk-analysis") for risk budgeting.
     tools: [bash, read_file, write_file, load_skill]
     skills: [asset-allocation, risk-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

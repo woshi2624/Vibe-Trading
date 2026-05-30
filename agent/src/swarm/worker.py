@@ -28,7 +28,7 @@ from src.tools import build_filtered_registry
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_MAX_ITERATIONS = int(os.getenv("SWARM_WORKER_MAX_ITER", "50"))
+_DEFAULT_MAX_ITERATIONS = int(os.getenv("SWARM_WORKER_MAX_ITER", "15"))
 _DEFAULT_TIMEOUT_SECONDS = int(os.getenv("SWARM_WORKER_TIMEOUT", "300"))
 
 
@@ -248,7 +248,10 @@ def build_worker_prompt(
         "- Write ONE focused Python script via `write_file`, then run it with `bash python script.py`.\n"
         "- Do NOT write long Python code inside bash. Use write_file + bash.\n"
         "- Do NOT fetch data with curl/requests. Use the patterns from load_skill (yfinance, OKX API via Python).\n"
-        "- If a script fails, read the error, fix with `edit_file`, re-run. Max 2 retries per script.\n\n"
+        "- If a script fails, read the error, fix with `edit_file`, re-run. Max 2 retries per script.\n"
+        "- **NEVER use time.sleep() with a value above 0.1 seconds.** "
+        "Do not add sleep() calls to avoid rate limits — use retry logic with exponential backoff capped at 0.1s instead. "
+        "Long sleep chains are the single biggest cause of slow swarm runs.\n\n"
         "**Phase 3 — Summarize (MUST use write_file):**\n"
         "- You MUST call `write_file` with path `report.md` to save your final report as a markdown file.\n"
         "- This is REQUIRED, not optional. Your final response MUST include a write_file call for report.md.\n"

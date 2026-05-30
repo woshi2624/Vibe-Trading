@@ -171,7 +171,7 @@ export function Agent() {
         const toolName = String(d.tool || "");
         // Only update toolCalls tracker (no message creation during streaming)
         act().addToolCall({
-          id: toolName, tool: toolName,
+          id: `${toolName}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, tool: toolName,
           arguments: (d.arguments as Record<string, string>) ?? {},
           status: "running", timestamp: Date.now(),
         });

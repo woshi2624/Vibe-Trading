@@ -42,8 +42,8 @@ agents:
       Use load_skill for SEC filing analysis, financial statement frameworks, and yfinance data.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [edgar-sec-filings, financial-statement, yfinance, fundamental-filter, valuation-model]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: revision_tracker
@@ -83,8 +83,8 @@ agents:
       Use load_skill for earnings revision analysis frameworks.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [earnings-revision, earnings-forecast]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: event_options_analyst
@@ -126,8 +126,8 @@ agents:
       Use load_skill for options analysis and event-driven strategy frameworks.
     tools: [bash, read_file, write_file, load_skill]
     skills: [options-advanced, options-strategy, event-driven, volatility]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: earnings_strategist
@@ -175,8 +175,8 @@ agents:
       Use load_skill for strategy generation and risk analysis.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [strategy-generate, risk-analysis, report-generate]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

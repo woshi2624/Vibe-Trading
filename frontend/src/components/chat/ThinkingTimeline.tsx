@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useRef, useMemo, memo } from "react";
 import { ChevronDown, ChevronRight, CheckCircle2, XCircle, Circle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -23,8 +23,18 @@ export const ThinkingTimeline = memo(function ThinkingTimeline({ messages, isLat
     return (t as Record<string, string>)[key] || tool;
   };
 
+  // Collapse only when a newer turn begins (isLatest flips false→false→true for
+  // a new group, so we track transitions: this group was latest, now it isn't).
+  const wasLatestRef = useRef(false);
   useEffect(() => {
-    if (!isLatest) setExpanded(false);
+    if (isLatest) {
+      wasLatestRef.current = true;
+      setExpanded(true);
+    } else if (wasLatestRef.current) {
+      // This group just stopped being the latest — a new turn started; collapse.
+      wasLatestRef.current = false;
+      setExpanded(false);
+    }
   }, [isLatest]);
 
   const { steps, hasError, isRunning, totalMs, latestTool, latestThinking } = useMemo(() => {

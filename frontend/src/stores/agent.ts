@@ -63,10 +63,22 @@ export const useAgentStore = create<AgentState>((set) => ({
 
   addToolCall: (entry) =>
     set((s) => ({ toolCalls: [...s.toolCalls, entry] })),
-  updateToolCall: (id, update) =>
-    set((s) => ({
-      toolCalls: s.toolCalls.map((tc) => tc.id === id ? { ...tc, ...update } : tc),
-    })),
+  updateToolCall: (tool, update) =>
+    set((s) => {
+      // Match the most recent running entry for this tool name.
+      // Falls back to the most recent entry of any status if none is running.
+      let targetIdx = -1;
+      for (let i = s.toolCalls.length - 1; i >= 0; i--) {
+        if (s.toolCalls[i].tool === tool) {
+          if (s.toolCalls[i].status === "running") { targetIdx = i; break; }
+          if (targetIdx === -1) targetIdx = i;
+        }
+      }
+      if (targetIdx === -1) return s;
+      return {
+        toolCalls: s.toolCalls.map((tc, i) => i === targetIdx ? { ...tc, ...update } : tc),
+      };
+    }),
 
   cacheSession: (sid, msgs) => {
     _sessionCache.delete(sid);

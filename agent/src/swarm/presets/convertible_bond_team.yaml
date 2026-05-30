@@ -28,8 +28,8 @@ agents:
       Use load_skill("convertible-bond") for convertible bond analytical methodology; load_skill("fundamental-filter") to support credit assessment.
     tools: [bash, read_file, write_file, load_skill]
     skills: [convertible-bond, fundamental-filter, credit-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: equity_analyst
@@ -58,8 +58,8 @@ agents:
       Use the factor_analysis tool for factor exposure analysis of underlying equities.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [convertible-bond, technical-basic, valuation-model]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: option_analyst
@@ -88,8 +88,8 @@ agents:
       Use the options_pricing tool for precise option pricing calculations.
     tools: [bash, read_file, write_file, load_skill, options_pricing]
     skills: [options-strategy, volatility, convertible-bond, options-payoff]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: cb_strategist
@@ -120,8 +120,8 @@ agents:
       Use the backtest tool to run historical backtests validating strategy robustness across different market environments.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [convertible-bond, strategy-generate]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

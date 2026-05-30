@@ -44,8 +44,8 @@ agents:
       6. **Peer Comparison** — Key financial metrics vs industry average / sector leaders
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [financial-statement, fundamental-filter]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: valuation_analyst
@@ -94,8 +94,8 @@ agents:
       6. **Valuation Catalysts** — 3–5 positive and negative catalysts that could drive re-rating
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [valuation-model, earnings-forecast]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: quality_analyst
@@ -144,8 +144,8 @@ agents:
       6. **Long-Term Holding Viability Conclusion** — Based on moat + management + competitive landscape: "Recommended for long-term hold / medium-term hold / not suitable for long-term"
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [fundamental-filter, web-reader]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: report_editor
@@ -178,8 +178,8 @@ agents:
       7. **Catalysts and Time Windows** — Potential positive/negative catalysts in the next 3–6 months to help identify optimal entry timing
     tools: [bash, read_file, write_file, load_skill]
     skills: [report-generate]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

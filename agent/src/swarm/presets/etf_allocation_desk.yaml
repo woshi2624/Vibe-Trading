@@ -67,8 +67,8 @@ agents:
       Use the factor_analysis tool for ETF tracking error and factor exposure analysis.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [etf-analysis, fund-analysis, tushare]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: macro_allocator
@@ -126,8 +126,8 @@ agents:
       Use the read_url tool to access the latest macro data (PMI / CPI / GDP / central bank reports).
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [macro-analysis, asset-allocation, global-macro]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: risk_budgeter
@@ -190,8 +190,8 @@ agents:
       Use load_skill("risk-analysis") for risk budgeting and risk decomposition methods; load_skill("volatility") for volatility modeling and correlation estimation; load_skill("etf-analysis") for ETF product risk characteristic analysis.
     tools: [bash, read_file, write_file, load_skill]
     skills: [risk-analysis, volatility, etf-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: portfolio_optimizer
@@ -243,8 +243,8 @@ agents:
       Use the backtest tool to execute a complete ETF portfolio historical backtest including transaction costs and rebalancing.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [etf-analysis, strategy-generate, asset-allocation]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

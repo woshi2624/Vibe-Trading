@@ -36,8 +36,8 @@ agents:
       Use the read_url tool to access the latest announcements, news, and regulatory disclosures.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [event-driven, corporate-events, web-reader, geopolitical-risk]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: impact_analyst
@@ -83,8 +83,8 @@ agents:
       Use the factor_analysis tool to analyze historical event abnormal return data.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [corporate-events, sentiment-analysis, valuation-model]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: strategy_builder
@@ -120,8 +120,8 @@ agents:
       Always use the backtest tool for historical event strategy validation; fabricating performance data is strictly prohibited.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [event-driven, strategy-generate]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

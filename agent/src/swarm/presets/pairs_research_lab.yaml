@@ -56,8 +56,8 @@ agents:
       Use factor_analysis for correlation and clustering.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [correlation-analysis, pair-trading, multi-factor]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: cointegration_tester
@@ -126,8 +126,8 @@ agents:
       Use factor_analysis for ADF, Johansen, Kalman where applicable.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [correlation-analysis, quant-statistics]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: pair_strategist
@@ -189,8 +189,8 @@ agents:
       Use backtest with costs, dynamic hedge, multi-pair rebalancing.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [pair-trading, correlation-analysis, strategy-generate]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: microstructure_reviewer
@@ -253,8 +253,8 @@ agents:
       Use load_skill("market-microstructure"), load_skill("execution-model").
     tools: [bash, read_file, write_file, load_skill]
     skills: [market-microstructure, execution-model]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

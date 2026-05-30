@@ -53,8 +53,8 @@ agents:
       Every claim needs numeric support, not theory-only.
     tools: [bash, read_file, write_file, load_skill]
     skills: [macro-analysis, seasonal]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: prosperity_analyst
@@ -107,8 +107,8 @@ agents:
       Must output a quantitative score table.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [sector-rotation, fundamental-filter, multi-factor]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: flow_analyst
@@ -160,8 +160,8 @@ agents:
       Prefer last 20 trading days; emphasize freshness.
     tools: [bash, read_file, write_file, load_skill]
     skills: [tushare, sentiment-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: rotation_strategist
@@ -206,8 +206,8 @@ agents:
       Must include backtest numbers via backtest—no qualitative-only.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [strategy-generate, sector-rotation]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

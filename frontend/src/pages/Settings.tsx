@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Database, KeyRound, Loader2, RotateCcw, Save, Server, SlidersHorizontal } from "lucide-react";
+import { Database, KeyRound, Loader2, RotateCcw, Save, Server, SlidersHorizontal, ToggleLeft } from "lucide-react";
 import { toast } from "sonner";
 import { api, isAuthRequiredError, type DataSourceSettings, type LLMProviderOption, type LLMSettings } from "@/lib/api";
 import { getApiAuthKey, setApiAuthKey } from "@/lib/apiAuth";
@@ -42,6 +42,9 @@ export function Settings() {
   const [clearApiKey, setClearApiKey] = useState(false);
   const [tushareToken, setTushareToken] = useState("");
   const [clearTushareToken, setClearTushareToken] = useState(false);
+  const [tushareUrl, setTushareUrl] = useState("");
+  const [clearTushareUrl, setClearTushareUrl] = useState(false);
+  const [enabledSources, setEnabledSources] = useState<string[]>(["tushare", "akshare", "yfinance", "okx", "ccxt"]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dataSaving, setDataSaving] = useState(false);
@@ -55,6 +58,7 @@ export function Settings() {
         setSettings(llmData);
         setForm(toForm(llmData));
         setDataSettings(dataSourceData);
+        setEnabledSources(dataSourceData.enabled_sources ?? ["tushare", "akshare", "yfinance", "okx", "ccxt"]);
         setSettingsLoadError(null);
       })
       .catch((error) => {
@@ -137,10 +141,16 @@ export function Settings() {
       const updated = await api.updateDataSourceSettings({
         tushare_token: tushareToken.trim() || undefined,
         clear_tushare_token: clearTushareToken,
+        tushare_url: tushareUrl.trim() || undefined,
+        clear_tushare_url: clearTushareUrl,
+        enabled_sources: enabledSources,
       });
       setDataSettings(updated);
+      setEnabledSources(updated.enabled_sources ?? ["tushare", "akshare", "yfinance", "okx", "ccxt"]);
       setTushareToken("");
       setClearTushareToken(false);
+      setTushareUrl("");
+      setClearTushareUrl(false);
       toast.success(t.dataSourceSettingsSaved);
     } catch (error) {
       toast.error(`${t.dataSourceSettingsSaveFailed}: ${error instanceof Error ? error.message : t.unknownError}`);
@@ -218,6 +228,7 @@ export function Settings() {
   const tushareStatus = dataSettings.tushare_token_configured
     ? t.tushareTokenConfigured
     : t.tushareTokenPlaceholder;
+  const tushareUrlStatus = dataSettings.tushare_url || t.tushareUrlPlaceholder;
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-6">
@@ -413,6 +424,51 @@ export function Settings() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+          {/* Source toggles — full width above the two-column credential fields */}
+          <div className="lg:col-span-2 rounded-md border bg-muted/20 p-4">
+            <div className="mb-3">
+              <div className="flex items-center gap-2 mb-1">
+                <ToggleLeft className="h-4 w-4 text-primary shrink-0" />
+                <span className="text-sm font-medium">{t.enabledSourcesLabel}</span>
+              </div>
+              <p className="text-xs text-muted-foreground">{t.enabledSourcesDesc}</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {([
+                { key: "tushare", label: t.srcTushare, desc: t.srcTushareDesc },
+                { key: "akshare", label: t.srcAkshare, desc: t.srcAkshareDesc },
+                { key: "yfinance", label: t.srcYfinance, desc: t.srcYfinanceDesc },
+                { key: "okx",     label: t.srcOkx,     desc: t.srcOkxDesc },
+                { key: "ccxt",    label: t.srcCcxt,    desc: t.srcCcxtDesc },
+              ] as const).map(({ key, label, desc }) => {
+                const checked = enabledSources.includes(key);
+                return (
+                  <label key={key} className="flex items-start gap-3 rounded-md border bg-background px-3 py-2.5 cursor-pointer hover:bg-muted/40 transition-colors">
+                    {/* Toggle switch */}
+                    <span className="relative mt-0.5 shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() =>
+                          setEnabledSources(prev =>
+                            checked ? prev.filter(s => s !== key) : [...prev, key]
+                          )
+                        }
+                        className="sr-only peer"
+                      />
+                      <span className="block w-9 h-5 rounded-full bg-muted peer-checked:bg-primary transition-colors" />
+                      <span className="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium leading-snug">{label}</span>
+                      <span className="block text-xs text-muted-foreground leading-snug mt-0.5">{desc}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="grid gap-4">
             <label className="grid gap-2">
               <span className={labelClass}>{t.tushareToken}</span>
@@ -441,6 +497,34 @@ export function Settings() {
                     className="h-3.5 w-3.5 accent-primary"
                   />
                   {t.clearTushareToken}
+                </label>
+              </div>
+            </label>
+
+            <label className="grid gap-2">
+              <span className={labelClass}>{t.tushareUrl}</span>
+              <input
+                type="url"
+                value={tushareUrl}
+                onChange={(event) => setTushareUrl(event.target.value)}
+                className={fieldClass}
+                placeholder={tushareUrlStatus}
+                autoComplete="off"
+                disabled={clearTushareUrl}
+              />
+              <div className="flex items-center justify-between gap-3">
+                <span className={hintClass}>{t.tushareUrlHint}</span>
+                <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={clearTushareUrl}
+                    onChange={(event) => {
+                      setClearTushareUrl(event.target.checked);
+                      if (event.target.checked) setTushareUrl("");
+                    }}
+                    className="h-3.5 w-3.5 accent-primary"
+                  />
+                  {t.clearTushareUrl}
                 </label>
               </div>
             </label>

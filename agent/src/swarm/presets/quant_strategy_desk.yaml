@@ -23,8 +23,8 @@ agents:
       Use load_skill for data access patterns.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [tushare, fundamental-filter]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: factor_miner
@@ -47,8 +47,8 @@ agents:
       Use factor_analysis for computations.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [multi-factor, factor-research]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: backtester
@@ -71,8 +71,8 @@ agents:
       You must run **backtest** with real outputs—do not fabricate numbers.
     tools: [bash, read_file, write_file, edit_file, load_skill, backtest]
     skills: [strategy-generate, technical-basic]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: risk_auditor
@@ -95,8 +95,8 @@ agents:
       Use load_skill for volatility methods.
     tools: [bash, read_file, write_file, load_skill]
     skills: [volatility]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

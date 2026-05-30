@@ -44,8 +44,8 @@ agents:
       Use factor_analysis for correlation and joint factor exposure to reduce spurious cointegration.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [pair-trading, quant-statistics, correlation-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: microstructure_analyst
@@ -85,8 +85,8 @@ agents:
       Use load_skill("market-microstructure"), load_skill("execution-model").
     tools: [bash, read_file, write_file, load_skill]
     skills: [market-microstructure, execution-model]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: arb_strategist
@@ -133,8 +133,8 @@ agents:
       Use backtest with realistic costs.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [pair-trading, strategy-generate, quant-statistics]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: risk_monitor
@@ -183,8 +183,8 @@ agents:
       Use load_skill("risk-analysis"), load_skill("volatility").
     tools: [bash, read_file, write_file, load_skill]
     skills: [risk-analysis, volatility]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

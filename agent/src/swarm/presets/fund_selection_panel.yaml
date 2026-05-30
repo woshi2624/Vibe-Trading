@@ -32,8 +32,8 @@ agents:
       Use the factor_analysis tool for factor-based analysis of fund historical performance.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [fund-analysis, fundamental-filter]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: attribution_analyst
@@ -82,8 +82,8 @@ agents:
       Use the factor_analysis tool for actual factor exposure calculations and attribution decomposition.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [performance-attribution, fund-analysis, multi-factor]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: fof_optimizer
@@ -134,8 +134,8 @@ agents:
       Always use the backtest tool to verify historical portfolio performance; do not fabricate data.
     tools: [bash, read_file, write_file, load_skill, backtest]
     skills: [asset-allocation, risk-analysis, strategy-generate, etf-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

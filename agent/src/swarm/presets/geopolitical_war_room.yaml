@@ -48,8 +48,8 @@ agents:
       Use read_url for GPR Index data and real-time geopolitical news.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [geopolitical-risk, web-reader, global-macro]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: energy_analyst
@@ -103,8 +103,8 @@ agents:
       Use read_url for latest EIA/IEA/OPEC data and reports.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [commodity-analysis, geopolitical-risk]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: supply_chain_analyst
@@ -160,8 +160,8 @@ agents:
       Use read_url for shipping data, semi industry reports, and supply-chain research.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [geopolitical-risk, sector-rotation, event-driven]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: chief_strategist
@@ -221,8 +221,8 @@ agents:
       Use load_skill("asset-allocation") for allocation framework, load_skill("risk-analysis") for risk budget and hedge sizing, load_skill("hedging-strategy") for instruments and execution.
     tools: [bash, read_file, write_file, load_skill]
     skills: [asset-allocation, risk-analysis, hedging-strategy]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:

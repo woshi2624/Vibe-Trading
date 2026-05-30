@@ -189,15 +189,20 @@ export interface UpdateLLMSettingsRequest {
 export interface DataSourceSettings {
   tushare_token_configured: boolean;
   tushare_token_hint?: string | null;
+  tushare_url?: string | null;
   baostock_supported: boolean;
   baostock_installed: boolean;
   baostock_message: string;
   env_path: string;
+  enabled_sources: string[];
 }
 
 export interface UpdateDataSourceSettingsRequest {
   tushare_token?: string;
   clear_tushare_token?: boolean;
+  tushare_url?: string;
+  clear_tushare_url?: boolean;
+  enabled_sources?: string[];
 }
 
 // --- Types matching backend API contracts ---

@@ -119,6 +119,9 @@ class TushareFundamentalProvider:
             if token in TUSHARE_TOKEN_PLACEHOLDERS:
                 token = ""
             api = ts.pro_api(token)
+            url = os.getenv("TUSHARE_URL", "").strip()
+            if url:
+                api._DataApi__http_url = url
         self.api = api
 
     def list_tables(self) -> list[str]:

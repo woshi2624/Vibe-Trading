@@ -34,6 +34,9 @@ class DataLoader:
 
         token = os.getenv("TUSHARE_TOKEN", "")
         self.api = ts.pro_api(token)
+        url = os.getenv("TUSHARE_URL", "").strip()
+        if url:
+            self.api._DataApi__http_url = url
 
     def fetch(
         self,

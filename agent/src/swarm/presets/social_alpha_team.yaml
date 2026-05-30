@@ -55,8 +55,8 @@ agents:
       Use read_url for X/FinTwit sources.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [social-media-intelligence, sentiment-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: telegram_analyst
@@ -118,8 +118,8 @@ agents:
       Use read_url for Telegram and Nansen/Dune.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [social-media-intelligence, sentiment-analysis, onchain-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: reddit_analyst
@@ -177,8 +177,8 @@ agents:
       Use read_url for Reddit pages/API data.
     tools: [bash, read_file, write_file, load_skill, read_url]
     skills: [social-media-intelligence, behavioral-finance, sentiment-analysis]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
   - id: alpha_synthesizer
@@ -240,8 +240,8 @@ agents:
       Use factor_analysis for factor stats.
     tools: [bash, read_file, write_file, load_skill, factor_analysis]
     skills: [social-media-intelligence, factor-research, quant-statistics]
-    max_iterations: 50
-    timeout_seconds: 1800
+    max_iterations: 15
+    timeout_seconds: 300
     max_retries: 1
 
 tasks:
