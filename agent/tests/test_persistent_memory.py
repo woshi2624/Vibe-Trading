@@ -145,6 +145,15 @@ class TestAdd:
         assert "description: one line" in text
         assert "body here" in text
 
+    def test_session_id_metadata_round_trips(self, tmp_path: Path) -> None:
+        pm = PersistentMemory(memory_dir=tmp_path)
+        path = pm.add("session-scoped", "body", "project", session_id="session-123")
+        text = path.read_text(encoding="utf-8")
+        assert "session_id: session-123" in text
+
+        entries = PersistentMemory(memory_dir=tmp_path).list_entries()
+        assert entries[0].session_id == "session-123"
+
     def test_multiple_adds(self, tmp_path: Path) -> None:
         pm = PersistentMemory(memory_dir=tmp_path)
         pm.add("mem-a", "aaa", "project")
@@ -292,6 +301,23 @@ class TestRemove:
         pm.remove("ephemeral")
         results = pm.find_relevant("temporary")
         assert len(results) == 0
+
+    def test_remove_for_session_removes_only_matching_entries(self, tmp_path: Path) -> None:
+        pm = PersistentMemory(memory_dir=tmp_path)
+        pm.add("session-a-1", "delete me", "project", session_id="session-a")
+        pm.add("session-a-2", "delete me too", "project", session_id="session-a")
+        pm.add("session-b", "keep me", "project", session_id="session-b")
+        pm.add("global", "keep global", "project")
+
+        assert pm.remove_for_session("session-a") == 2
+
+        remaining = {entry.title for entry in PersistentMemory(memory_dir=tmp_path).list_entries()}
+        assert remaining == {"session-b", "global"}
+        index = (tmp_path / "MEMORY.md").read_text(encoding="utf-8")
+        assert "session-a-1" not in index
+        assert "session-a-2" not in index
+        assert "session-b" in index
+        assert "global" in index
 
 
 # ---------------------------------------------------------------------------

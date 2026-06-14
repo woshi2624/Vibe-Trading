@@ -65,6 +65,18 @@ class TestIndexing:
         if results:
             assert results[0].message_count == 3
 
+    def test_delete_session_removes_messages_from_search(self, index: SessionSearchIndex) -> None:
+        index.index_session("s1", "Delete me")
+        index.index_message("s1", "user", "shared deletion probe")
+        index.index_session("s2", "Keep me")
+        index.index_message("s2", "user", "shared deletion probe")
+
+        assert index.delete_session("s1") is True
+
+        results = index.search("shared deletion probe", max_sessions=5)
+        assert {match.session_id for match in results} == {"s2"}
+        assert index.delete_session("missing") is False
+
 
 # ---------------------------------------------------------------------------
 # Search

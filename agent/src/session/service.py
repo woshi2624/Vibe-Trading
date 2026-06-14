@@ -7,12 +7,14 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 # Dedicated thread pool limited to four concurrent agents to avoid exhausting the default executor.
 _AGENT_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="agent")
+logger = logging.getLogger(__name__)
 
 from src.session.events import EventBus
 from src.session.models import (
@@ -39,6 +41,7 @@ class SessionService:
         store: SessionStore,
         event_bus: EventBus,
         runs_dir: Path,
+        memory_dir: Optional[Path] = None,
     ) -> None:
         """Initialize the session service.
 
@@ -46,10 +49,12 @@ class SessionService:
             store: Session persistence store.
             event_bus: SSE event bus.
             runs_dir: Root runs directory.
+            memory_dir: Optional persistent-memory directory override.
         """
         self.store = store
         self.event_bus = event_bus
         self.runs_dir = runs_dir
+        self.memory_dir = memory_dir
         self._active_loops: Dict[str, "AgentLoop"] = {}
         self._search_index = get_shared_index()
 
@@ -79,8 +84,25 @@ class SessionService:
 
     def delete_session(self, session_id: str) -> bool:
         """Delete a session."""
+        deleted = self.store.delete_session(session_id)
+        if not deleted:
+            return False
+
         self.event_bus.clear(session_id)
-        return self.store.delete_session(session_id)
+        try:
+            self._search_index.delete_session(session_id)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Failed to remove session %s from search index: %s", session_id, exc)
+
+        try:
+            from src.memory.persistent import PersistentMemory
+
+            memory = PersistentMemory(memory_dir=self.memory_dir) if self.memory_dir else PersistentMemory()
+            memory.remove_for_session(session_id)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Failed to remove memories for session %s: %s", session_id, exc)
+
+        return True
 
     async def send_message(
         self,
@@ -220,7 +242,7 @@ class SessionService:
         from src.config.loader import load_runtime_agent_config, sanitize_session_overrides
 
         llm = ChatLLM()
-        pm = PersistentMemory()
+        pm = PersistentMemory(memory_dir=self.memory_dir) if self.memory_dir else PersistentMemory()
 
         session_id = attempt.session_id
         attempt_id = attempt.attempt_id

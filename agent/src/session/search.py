@@ -188,6 +188,21 @@ class SessionSearchIndex:
         )
         conn.commit()
 
+    def delete_session(self, session_id: str) -> bool:
+        """Remove a session and its messages from the search index.
+
+        Args:
+            session_id: Session ID.
+
+        Returns:
+            True if a session row or message rows were removed.
+        """
+        conn = self._get_conn()
+        msg_cursor = conn.execute("DELETE FROM messages WHERE session_id = ?", (session_id,))
+        session_cursor = conn.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+        conn.commit()
+        return (msg_cursor.rowcount + session_cursor.rowcount) > 0
+
     @staticmethod
     def _sanitize_fts_query(query: str) -> str:
         """Sanitize a user query for FTS5 MATCH syntax.

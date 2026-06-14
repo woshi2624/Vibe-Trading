@@ -55,6 +55,7 @@ class MemoryEntry:
         memory_type: Category (user/feedback/project/reference).
         body: Body text content.
         modified_at: File modification timestamp.
+        session_id: Optional source Session ID for session-scoped cleanup.
     """
 
     path: Path
@@ -63,6 +64,7 @@ class MemoryEntry:
     memory_type: str
     body: str
     modified_at: float
+    session_id: str = ""
 
 
 def _tokenize(text: str) -> set[str]:
@@ -199,6 +201,7 @@ class PersistentMemory:
                 memory_type=_coerce_str(meta.get("type"), default="project"),
                 body=body[:MAX_ENTRY_CHARS],
                 modified_at=path.stat().st_mtime,
+                session_id=_coerce_str(meta.get("session_id")),
             ))
         return entries
 
@@ -263,7 +266,7 @@ class PersistentMemory:
         return [entry for _, entry in scored[:max_results]]
 
     def add(self, name: str, content: str, memory_type: str = "project",
-            description: str = "") -> Path:
+            description: str = "", session_id: str = "") -> Path:
         """Save a new memory entry and update the index.
 
         Args:
@@ -274,6 +277,8 @@ class PersistentMemory:
                 ``MAX_ENTRY_CHARS`` with a visible marker.
             memory_type: One of user/feedback/project/reference.
             description: One-line description for retrieval scoring.
+            session_id: Optional source Session ID. When present, deleting
+                that session also removes this memory entry.
 
         Returns:
             Path to the created memory file.
@@ -306,17 +311,22 @@ class PersistentMemory:
 
         safe_name = stripped_name.replace("\n", " ").replace("\r", " ")
         safe_desc = (description or stripped_name).replace("\n", " ").replace("\r", " ")
+        safe_session_id = (session_id or "").replace("\n", " ").replace("\r", " ").strip()
 
         # Strip control bytes (#108) before truncation (#109) so the marker
         # is computed against the user-visible content length.
         clean_content = _truncate_body(_sanitize_body(content))
 
-        frontmatter = (
-            f"---\nname: {safe_name}\n"
-            f"description: {safe_desc}\n"
-            f"type: {memory_type}\n---\n\n"
-            f"{clean_content}"
-        )
+        metadata = [
+            "---",
+            f"name: {safe_name}",
+            f"description: {safe_desc}",
+            f"type: {memory_type}",
+        ]
+        if safe_session_id:
+            metadata.append(f"session_id: {safe_session_id}")
+        metadata.append("---")
+        frontmatter = "\n".join(metadata) + f"\n\n{clean_content}"
         path.write_text(frontmatter, encoding="utf-8")
         self._update_index(stripped_name, filename, description or stripped_name)
         return path
@@ -336,6 +346,34 @@ class PersistentMemory:
                 self._rebuild_index()
                 return True
         return False
+
+    def remove_for_session(self, session_id: str) -> int:
+        """Remove all memory entries created by a session.
+
+        Args:
+            session_id: Source Session ID to forget.
+
+        Returns:
+            Number of memory files removed.
+        """
+        needle = session_id.strip()
+        if not needle:
+            return 0
+
+        removed = 0
+        for entry in self._scan_entries():
+            if entry.session_id != needle:
+                continue
+            try:
+                entry.path.unlink(missing_ok=True)
+            except OSError as exc:
+                logger.warning("Failed to remove memory entry %s: %s", entry.path, exc)
+                continue
+            removed += 1
+
+        if removed:
+            self._rebuild_index()
+        return removed
 
     def _update_index(self, title: str, filename: str, description: str) -> None:
         """Append or update an entry in MEMORY.md."""

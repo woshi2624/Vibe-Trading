@@ -302,6 +302,7 @@ class AgentLoop:
         self._cancelled: bool = False
         self._previous_summary: str = ""
         self._persistent_memory = persistent_memory
+        self._session_id: str = ""
 
     def cancel(self) -> None:
         """Cancel the current loop.
@@ -325,6 +326,7 @@ class AgentLoop:
         self._cancelled = False
         self._called_ok = set()
         self._previous_summary = ""
+        self._session_id = session_id
 
         state_store = RunStateStore()
         RUNS_DIR.mkdir(parents=True, exist_ok=True)
@@ -619,7 +621,7 @@ class AgentLoop:
             args = _normalize_tool_run_dir(tc.arguments, self.memory.run_dir)
             self._emit("tool_call", {"tool": tc.name, "arguments": {k: str(v)[:200] for k, v in args.items()}, "iter": iteration})
             trace.write({"type": "tool_call", "iter": iteration, "tool": tc.name, "args": {k: str(v)[:200] for k, v in args.items()}})
-            runnable.append((tc, args))
+            runnable.append((tc, self._with_internal_tool_context(tc.name, args)))
 
         # Execute in parallel — each worker gets its own heartbeat + progress emitter.
         def _run(tc_args: tuple) -> tuple:
@@ -666,9 +668,20 @@ class AgentLoop:
         trace.write({"type": "tool_call", "iter": iteration, "tool": tc.name, "args": {k: str(v)[:200] for k, v in args.items()}})
         logger.info(f"Tool call: {tc.name}({list(args.keys())})")
 
-        result, elapsed_ms = self._invoke_tool(tc.name, args)
+        result, elapsed_ms = self._invoke_tool(
+            tc.name,
+            self._with_internal_tool_context(tc.name, args),
+        )
 
         self._finalize_tool_result(tc, result, elapsed_ms, context, messages, trace, react_trace, iteration)
+
+    def _with_internal_tool_context(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Attach hidden execution context for tools that persist cross-session state."""
+        if tool_name != "remember" or not self._session_id:
+            return args
+        contextual_args = dict(args)
+        contextual_args["_session_id"] = self._session_id
+        return contextual_args
 
     def _invoke_tool(self, tool_name: str, args: Dict[str, Any]) -> tuple[str, int]:
         """Execute a tool with heartbeat + structured progress emission.

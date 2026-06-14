@@ -34,6 +34,18 @@ class TestSave:
         assert result["status"] == "ok"
         assert Path(result["path"]).name.startswith("user_")
 
+    def test_save_with_internal_session_id(self, tool: RememberTool) -> None:
+        result = json.loads(
+            tool.execute(
+                action="save",
+                title="scoped-pref",
+                content="session-owned",
+                _session_id="session-123",
+            )
+        )
+        assert result["status"] == "ok"
+        assert "session_id: session-123" in Path(result["path"]).read_text(encoding="utf-8")
+
     def test_save_missing_title(self, tool: RememberTool) -> None:
         result = json.loads(tool.execute(action="save", content="body"))
         assert result["status"] == "error"

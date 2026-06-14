@@ -138,3 +138,15 @@ def test_session_service_renders_meaningful_error_from_result(tmp_path: Path) ->
     assert ui_error != "unknown"
     assert "max iterations" in ui_error
     assert "2" in ui_error
+
+
+def test_internal_session_context_only_attaches_to_remember(tmp_path: Path) -> None:
+    agent = _build_agent(_StubLLMNoFinal(), tmp_run_dir=tmp_path / "run")
+    agent._session_id = "session-123"
+    args = {"action": "save", "title": "pref"}
+
+    contextual = agent._with_internal_tool_context("remember", args)
+
+    assert contextual == {"action": "save", "title": "pref", "_session_id": "session-123"}
+    assert args == {"action": "save", "title": "pref"}
+    assert agent._with_internal_tool_context("read_file", args) is args
